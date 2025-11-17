@@ -10,8 +10,6 @@ import java.util.Set;
 @Service
 public interface UserService {
     public User loadUserById(Long id);
-    public Set<String> getEffectivePermissions(User user);
-    public boolean hasPermission(User user, String permission);
     public User save(User u);
     public Optional<User> findByEmail(String email);
 

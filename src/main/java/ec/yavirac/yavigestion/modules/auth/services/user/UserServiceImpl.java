@@ -18,8 +18,8 @@ public class UserServiceImpl implements UserService {
         this.userRepository = repo;
     }
 
-    public User save(User u) {
-        return userRepository.save(u);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
     public Optional<User> findByEmail(String email) {
@@ -28,36 +28,5 @@ public class UserServiceImpl implements UserService {
 
     public User loadUserById(Long id) {
         return userRepository.findById(id).orElse(null);
-    }
-
-    /**
-     * Obtiene permisos calculados del usuario. Si el usuario tiene ROLE_ADMIN (por nombre),
-     * devolvemos null o un set especial para indicar "todos" (bypass lógico).
-     */
-    public Set<String> getEffectivePermissions(User user) {
-        if (user == null) return Set.of();
-        // si tiene rol admin devolvemos un set con "*" para indicar que tiene TODO
-        boolean isAdmin = user.getRoles().stream()
-                .map(Role::getName)
-                .anyMatch(rn -> rn.equalsIgnoreCase("ROLE_ADMIN") || rn.equalsIgnoreCase("admin"));
-
-        if (isAdmin) {
-            return Set.of("*"); // indicador: tiene todos los permisos
-        }
-
-        return user.getRoles().stream()
-                .flatMap(r -> {
-                    Set<Permission> perms = r.getPermissions();
-                    if (perms == null) return java.util.stream.Stream.empty();
-                    return perms.stream();
-                })
-                .map(Permission::getName)
-                .collect(Collectors.toSet());
-    }
-
-    public boolean hasPermission(User user, String permission) {
-        Set<String> effective = getEffectivePermissions(user);
-        if (effective.contains("*")) return true; // admin bypass
-        return effective.contains(permission);
     }
 }
