@@ -27,7 +27,6 @@ public class AdminController {
         this.userRepo = userRepo;
     }
 
-    // Crear rol
     @PostMapping("/roles")
     @HasPermission("roles:create")
     public ResponseEntity<?> createRole(@RequestBody Role role) {

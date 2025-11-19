@@ -3,6 +3,9 @@ package ec.yavirac.yavigestion.modules.auth.services.permission;
 import ec.yavirac.yavigestion.modules.auth.entities.Permission;
 import ec.yavirac.yavigestion.modules.auth.entities.Role;
 import ec.yavirac.yavigestion.modules.auth.entities.User;
+import ec.yavirac.yavigestion.modules.auth.services.roles.RoleService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -12,6 +15,9 @@ import java.util.stream.Collectors;
 
 @Service("permissionService")
 public class PermissionService {
+
+
+
     public boolean hasPermission(String permission) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) auth.getPrincipal();
