@@ -1,9 +1,17 @@
 package ec.yavirac.yavigestion.modules.administration.services.projects;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
+import ec.yavirac.yavigestion.modules.administration.entities.projects.Project;
 
-@Service
 public interface ProjectService {
-    public void delete(Long id);
 
+    Project save(Project project);
+
+    Project update(Long id, Project project);
+
+    void delete(Long id);
+
+    Project findById(Long id);
+
+    List<Project> findAll();
 }
