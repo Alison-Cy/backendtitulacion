@@ -32,4 +32,7 @@ public class User {
     public void prePersist() {
         createdAt = Instant.now();
     }
+
+    @OneToOne
+    Person person;
 }

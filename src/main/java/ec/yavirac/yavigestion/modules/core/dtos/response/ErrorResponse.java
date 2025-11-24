@@ -12,21 +12,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ErrorResponse {
-    private String titulo;
-    private String mensaje;
-    private Object detalles;
+    private String title;
+    private String message;
+    private Object details;
     private LocalDateTime timestamp;
 
-    public ErrorResponse(String titulo, String mensaje, Object detalles) {
-        this.titulo = titulo;
-        this.mensaje = mensaje;
-        this.detalles = detalles;
+    public ErrorResponse(String title, String message, Object details) {
+        this.title = title;
+        this.message = message;
+        this.details = details;
         this.timestamp = LocalDateTime.now();
     }
-    public ErrorResponse(String titulo, String mensaje) {
-        this.titulo = titulo;
-        this.mensaje = mensaje;
-        this.detalles = null;
+    public ErrorResponse(String title, String message) {
+        this.title = title;
+        this.message = message;
+        this.details = null;
         this.timestamp = LocalDateTime.now();
     }
 }

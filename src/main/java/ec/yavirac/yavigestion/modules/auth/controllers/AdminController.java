@@ -1,74 +1,67 @@
 package ec.yavirac.yavigestion.modules.auth.controllers;
 
-import java.util.Optional;
-
 import ec.yavirac.yavigestion.modules.auth.decorators.HasPermission;
 import ec.yavirac.yavigestion.modules.auth.entities.Permission;
 import ec.yavirac.yavigestion.modules.auth.entities.Role;
-import ec.yavirac.yavigestion.modules.auth.entities.User;
-import ec.yavirac.yavigestion.modules.auth.repositories.PermissionRepository;
-import ec.yavirac.yavigestion.modules.auth.repositories.RoleRepository;
-import ec.yavirac.yavigestion.modules.auth.repositories.UserRepository;
+import ec.yavirac.yavigestion.modules.auth.services.admin.AdminService;
+import ec.yavirac.yavigestion.modules.core.dtos.response.GenericOnlyTextResponse;
+import ec.yavirac.yavigestion.modules.core.dtos.response.GenericResponse;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/admin")
+@Log4j2
 public class AdminController {
+    @Qualifier("adminServiceImpl")
+    private final AdminService adminService;
 
-    private final RoleRepository roleRepo;
-    private final PermissionRepository permissionRepo;
-    private final UserRepository userRepo;
-
-
-    public AdminController(RoleRepository roleRepo, PermissionRepository permissionRepo, UserRepository userRepo) {
-        this.roleRepo = roleRepo;
-        this.permissionRepo = permissionRepo;
-        this.userRepo = userRepo;
+    public AdminController(AdminService adminService) {
+        this.adminService = adminService;
     }
 
     @PostMapping("/roles")
     @HasPermission("roles:create")
-    public ResponseEntity<?> createRole(@RequestBody Role role) {
-        if (roleRepo.findByName(role.getName()).isPresent()) return ResponseEntity.badRequest().body("Rol ya existe");
-        Role saved = roleRepo.save(role);
-        return ResponseEntity.status(201).body(saved);
+    public ResponseEntity<GenericResponse<Role>> createRole(@RequestBody Role role) {
+        log.info("Creando rol: {}", role.toString());
+        GenericResponse<Role> createRole = adminService.createRole(role);
+        log.info("Devolviendo respuesta: {}", createRole.toString());
+        return ResponseEntity
+                .status(createRole.getStatus())
+                .body(createRole);
     }
 
     @PostMapping("/permissions")
     @HasPermission("permissions:create")
-    public ResponseEntity<?> createPermission(@RequestBody Permission p) {
-        if (permissionRepo.findByName(p.getName()).isPresent()) return ResponseEntity.badRequest().body("Permission ya existe");
-        Permission saved = permissionRepo.save(p);
-        return ResponseEntity.status(201).body(saved);
+    public ResponseEntity<?> createPermission(@RequestBody Permission permission) {
+        log.info("Creando permiso: {}", permission.toString());
+        GenericResponse<Permission> createdPermission = adminService.createPermission(permission);
+        log.info("Devolviendo respuesta: {}", createdPermission.toString());
+        return ResponseEntity
+                .status(createdPermission.getStatus())
+                .body(createdPermission);
     }
 
     @PostMapping("/roles/{roleName}/permissions")
     @HasPermission("roles:assign_permission")
-    public ResponseEntity<?> addPermissionToRole(@PathVariable String roleName, @RequestParam String permissionName) {
-
-        Optional<Role> ro = roleRepo.findByName(roleName);
-        if (ro.isEmpty()) return ResponseEntity.status(404).body("Rol no encontrado");
-        Role role = ro.get();
-
-        Permission perm = permissionRepo.findByName(permissionName).orElseGet(() -> permissionRepo.save(Permission.builder().name(permissionName).build()));
-        role.getPermissions().add(perm);
-        roleRepo.save(role);
-        return ResponseEntity.ok("Permiso añadido");
+    public ResponseEntity<GenericOnlyTextResponse> addPermissionToRole(@PathVariable String roleName, @RequestParam String permissionName) {
+        log.info("Asignando permiso {} al rol {}", permissionName, roleName);
+        GenericOnlyTextResponse response = adminService.addPermissionToRole(roleName, permissionName);
+        log.info("Devolviendo respuesta: {}", response.toString());
+        return ResponseEntity
+                .status(response.getStatus())
+                .body(response);
     }
 
     @PostMapping("/users/{userId}/roles")
-    public ResponseEntity<?> addRoleToUser(@PathVariable Long userId, @RequestParam String roleName) {
-
-        Optional<User> ou = userRepo.findById(userId);
-        if (ou.isEmpty()) return ResponseEntity.status(404).body("Usuario no encontrado");
-        Optional<Role> or = roleRepo.findByName(roleName);
-        if (or.isEmpty()) return ResponseEntity.status(404).body("Rol no encontrado");
-
-        User u = ou.get();
-        u.getRoles().add(or.get());
-        userRepo.save(u);
-        return ResponseEntity.ok("Rol asignado");
+    public ResponseEntity<GenericOnlyTextResponse> addRoleToUser(@PathVariable Long userId, @RequestParam String roleName) {
+        log.info("Asignando rol {} al usuario {}", roleName, userId);
+        GenericOnlyTextResponse response = adminService.addRoleToUser(userId, roleName);
+        log.info("Devolviendo respuesta: {}", response.toString());
+        return ResponseEntity
+                .status(response.getStatus())
+                .body(response);
     }
-
 }
