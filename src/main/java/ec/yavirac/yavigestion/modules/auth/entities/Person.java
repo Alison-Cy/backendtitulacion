@@ -1,10 +1,12 @@
 package ec.yavirac.yavigestion.modules.auth.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import ec.yavirac.yavigestion.modules.administration.enums.BloodType;
+import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -12,17 +14,19 @@ import lombok.Setter;
 public class Person {
     @Id
     private Long id;
-
     private String name;
     private String lastname;
     private String dni;
     private String email;
     private String phonenumber;
     private String address;
-    private String bloodtype;
+    @Enumerated(EnumType.STRING)
+    private BloodType bloodtype;
     private String gender;
-    private String birthdate;
+    private LocalDate birthdate;
 
-    @OneToOne
+    @OneToOne(mappedBy = "person")
     private User user;
+
+    String status = StatusConst.ACTIVE;
 }

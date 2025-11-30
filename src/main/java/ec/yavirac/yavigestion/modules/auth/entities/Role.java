@@ -1,5 +1,6 @@
 package ec.yavirac.yavigestion.modules.auth.entities;
 
+import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.Set;
@@ -23,4 +24,6 @@ public class Role {
             inverseJoinColumns = @JoinColumn(name = "permission_id")
     )
     private Set<Permission> permissions;
+
+    String status = StatusConst.ACTIVE;
 }

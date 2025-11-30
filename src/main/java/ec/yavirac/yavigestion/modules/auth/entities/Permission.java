@@ -1,6 +1,7 @@
 package ec.yavirac.yavigestion.modules.auth.entities;
 
 
+import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,4 +15,6 @@ public class Permission {
     @Column(unique = true, nullable = false)
     private String name;
     private String description;
+
+    String status = StatusConst.ACTIVE;
 }

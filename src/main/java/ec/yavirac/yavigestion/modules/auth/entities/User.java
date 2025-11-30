@@ -1,5 +1,6 @@
 package ec.yavirac.yavigestion.modules.auth.entities;
 
+import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
@@ -33,6 +34,9 @@ public class User {
         createdAt = Instant.now();
     }
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "person_id", referencedColumnName = "id")
     Person person;
+
+    String status = StatusConst.ACTIVE;
 }
