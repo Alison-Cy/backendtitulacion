@@ -3,15 +3,29 @@ package ec.yavirac.yavigestion.modules.auth.entities;
 import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "created_at", updatable = false, nullable = false)
+    @CreatedDate
+    private LocalDate createdAt;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private LocalDate updatedAt;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -19,7 +33,6 @@ public class User {
     @Column(nullable = false)
     private String passwordHash;
 
-    private Instant createdAt;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -28,11 +41,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles;
-
-    @PrePersist
-    public void prePersist() {
-        createdAt = Instant.now();
-    }
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", referencedColumnName = "id")

@@ -1,16 +1,22 @@
 package ec.yavirac.yavigestion.modules.administration.services.database.vinculation;
 
 import java.util.List;
+
+import ec.yavirac.yavigestion.modules.core.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ec.yavirac.yavigestion.modules.administration.entities.Vinculation;
 import ec.yavirac.yavigestion.modules.administration.repositories.VinculationRepository;
 
 @Service
 public class VinculationServiceImpl implements VinculationService {
+    private final VinculationRepository repository;
 
-    @Autowired
-    private VinculationRepository repository;
+    public VinculationServiceImpl(VinculationRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public Vinculation save(Vinculation vinculation) {
@@ -20,18 +26,18 @@ public class VinculationServiceImpl implements VinculationService {
     @Override
     public Vinculation findById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+                .orElseThrow(() -> new NotFoundException("Empresa no encontrada"));
     }
 
     @Override
-    public List<Vinculation> findAll() {
-        return repository.findAll();
+    public Page<Vinculation> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
     }
 
     @Override
     public Vinculation update(Vinculation vinculation) {
         if (!repository.existsById(vinculation.getId())) {
-            throw new RuntimeException("No se puede actualizar, el registro no existe");
+            throw new NotFoundException("No se puede actualizar, el registro no existe");
         }
         return repository.save(vinculation);
     }

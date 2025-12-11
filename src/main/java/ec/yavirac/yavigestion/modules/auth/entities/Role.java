@@ -3,14 +3,28 @@ package ec.yavirac.yavigestion.modules.auth.entities;
 import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Table(name = "roles")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Role {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "created_at", updatable = false, nullable = false)
+    @CreatedDate
+    private LocalDate createdAt;
+
+    @Column(name = "updated_at")
+    @LastModifiedDate
+    private LocalDate updatedAt;
 
     @Column(unique = true, nullable = false)
     private String name;
