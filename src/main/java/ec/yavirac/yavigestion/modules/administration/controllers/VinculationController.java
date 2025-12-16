@@ -1,7 +1,14 @@
 package ec.yavirac.yavigestion.modules.administration.controllers;
 
 import java.util.List;
+
+import ec.yavirac.yavigestion.modules.administration.entities.Project;
+import ec.yavirac.yavigestion.modules.core.dtos.response.GenericPaginationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ec.yavirac.yavigestion.modules.administration.entities.Vinculation;
 import ec.yavirac.yavigestion.modules.administration.services.database.vinculation.VinculationService;
@@ -25,8 +32,17 @@ public class VinculationController {
     }
 
     @GetMapping
-    public List<Vinculation> getAll() {
-        return service.findAll();
+    public GenericPaginationResponse<Vinculation> getAll(@PageableDefault(size = 15) Pageable pageable) {
+        Page<Vinculation> page = service.findAll(pageable);
+        return ResponseEntity.ok(GenericPaginationResponse
+                .<Vinculation>builder()
+                .currentPage(pageable.getPageNumber())
+                .data(page.getContent())
+                .totalPages(page.getTotalPages())
+                .pageSize(pageable.getPageSize())
+                .totalElements(page.getTotalElements())
+                .status(200)
+                .build()).getBody();
     }
 
     @PutMapping

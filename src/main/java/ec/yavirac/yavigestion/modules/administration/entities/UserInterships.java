@@ -1,5 +1,6 @@
 package ec.yavirac.yavigestion.modules.administration.entities;
 
+import ec.yavirac.yavigestion.modules.auth.entities.User;
 import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,17 +9,16 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 
 @Entity
-@Table(name = "enterprises")
+@Table(name = "user_interships")
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
-public class Enterprise {
+public class UserInterships {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "created_at", updatable = false, nullable = false)
@@ -29,15 +29,16 @@ public class Enterprise {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private String name;
-    private String description;
-    private String ruc;
-    private String address;
-    private String telephone;
-    private String email;
+    private Long academicNote;
+    private Long enterpriseNote;
 
-    @OneToMany(mappedBy = "enterprise", fetch = FetchType.LAZY)
-    private Set<Project> projects;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "intership_id")
+    private Interships interships;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private String status = StatusConst.ACTIVE;
 }

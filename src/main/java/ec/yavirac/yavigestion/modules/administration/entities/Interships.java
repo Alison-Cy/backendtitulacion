@@ -1,6 +1,6 @@
 package ec.yavirac.yavigestion.modules.administration.entities;
 
-import ec.yavirac.yavigestion.modules.auth.entities.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,6 +10,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,19 +25,27 @@ public class Interships {
 
     @Column(name = "created_at", updatable = false, nullable = false)
     @CreatedDate
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
-    // TODO: Terminar las relaciones
-    private Set<User> users;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "academic_period_id")
+    private AcademicPeriods academicPeriod;
+
+
+    @OneToMany (mappedBy = "interships", fetch = FetchType.LAZY)
+    private Set<UserInterships> users = new HashSet<>();
     private String name;
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "enterprise_id")
-    private Enterprise enterprise;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "project_id")
+    @JsonIgnore
+    private Project project;
+
     @Column(name = "start_date")
     private LocalDate startDate;
     @Column(name = "end_date")

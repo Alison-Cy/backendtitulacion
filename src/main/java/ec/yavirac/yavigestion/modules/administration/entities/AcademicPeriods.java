@@ -38,5 +38,8 @@ public class AcademicPeriods {
     @ManyToMany(mappedBy = "academicPeriods")
     private Set<Career> careers;
 
+    @OneToMany(mappedBy = "academicPeriod", fetch = FetchType.LAZY)
+    private Set<Interships> interships;
+
     private String status = StatusConst.ACTIVE;
 }

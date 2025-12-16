@@ -5,15 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatusCode;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
 public class GenericPaginationResponse<T> {
     private String message;
-    private HttpStatusCode status;
-    private T data;
+    private int status;
+    private List<T> data;
     private int totalPages;
     private int currentPage;
-    private int totalElements;
+    private long totalElements;
     private int pageSize;
 }

@@ -9,6 +9,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "projects")
@@ -21,11 +23,11 @@ public class Project {
 
     @Column(name = "created_at", updatable = false, nullable = false)
     @CreatedDate
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
 
     private String name;
     private String address;
@@ -40,10 +42,15 @@ public class Project {
     @Column(length = 2000, name = "final_report")
     private String finalReport;
 
-    // TODO: Terminar las relaciones
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "enterprise_id")
     private Enterprise enterprise;
+
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    private Set<Interships> interships;
+
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    private Set<Vinculation> vinculations;
 
     private String status = StatusConst.ACTIVE;
 }

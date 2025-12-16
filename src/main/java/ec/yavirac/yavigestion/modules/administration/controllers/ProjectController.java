@@ -1,7 +1,11 @@
 package ec.yavirac.yavigestion.modules.administration.controllers;
 
 import ec.yavirac.yavigestion.modules.administration.entities.Project;
+import ec.yavirac.yavigestion.modules.core.dtos.response.GenericPaginationResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,8 +27,17 @@ public class ProjectController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Project>> list() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<GenericPaginationResponse<Project>> list(@PageableDefault(size = 15) Pageable pageable) {
+        Page<Project> page = service.findAll(pageable);
+        return ResponseEntity.ok(GenericPaginationResponse
+                .<Project>builder()
+                .currentPage(pageable.getPageNumber())
+                .data(page.getContent())
+                .totalPages(page.getTotalPages())
+                .pageSize(pageable.getPageSize())
+                .totalElements(page.getTotalElements())
+                .status(200)
+                .build());
     }
 
     @GetMapping("/{id}")

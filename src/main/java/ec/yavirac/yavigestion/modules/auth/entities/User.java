@@ -1,5 +1,7 @@
 package ec.yavirac.yavigestion.modules.auth.entities;
 
+import ec.yavirac.yavigestion.modules.administration.entities.Interships;
+import ec.yavirac.yavigestion.modules.administration.entities.UserInterships;
 import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,6 +47,10 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     Person person;
+
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<UserInterships> interships;
 
     String status = StatusConst.ACTIVE;
 }
