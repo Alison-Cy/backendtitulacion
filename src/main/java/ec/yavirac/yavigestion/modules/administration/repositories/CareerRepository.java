@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface CareerRepository extends JpaRepository<Career,Long > {
     Page<Career> findAll(Pageable pageable);
 
+    Long countCareerByStatus(String status);
 }

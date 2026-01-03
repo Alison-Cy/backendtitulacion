@@ -12,5 +12,6 @@ public interface UserService {
     public User loadUserById(Long id);
     public User save(User u);
     public Optional<User> findByEmail(String email);
+    public Long count();
 
 }

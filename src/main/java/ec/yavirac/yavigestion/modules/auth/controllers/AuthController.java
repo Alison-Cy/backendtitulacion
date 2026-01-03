@@ -1,6 +1,7 @@
 package ec.yavirac.yavigestion.modules.auth.controllers;
 
 import ec.yavirac.yavigestion.modules.auth.dtos.request.AuthRequest;
+import ec.yavirac.yavigestion.modules.auth.dtos.request.RegisterRequest;
 import ec.yavirac.yavigestion.modules.auth.dtos.response.AuthResponse;
 import ec.yavirac.yavigestion.modules.auth.services.authentication.AuthenticationService;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericOnlyTextResponse;
@@ -22,7 +23,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<GenericOnlyTextResponse> register(@RequestBody AuthRequest req) {
+    public ResponseEntity<GenericOnlyTextResponse> register(@RequestBody RegisterRequest req) {
         log.info("Registrando usuario: {}", req.getEmail());
         GenericOnlyTextResponse response = authenticationService.register(req);
         return ResponseEntity

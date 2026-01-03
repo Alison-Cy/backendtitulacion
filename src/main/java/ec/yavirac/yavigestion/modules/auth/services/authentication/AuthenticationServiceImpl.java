@@ -1,10 +1,14 @@
 package ec.yavirac.yavigestion.modules.auth.services.authentication;
 
 import ec.yavirac.yavigestion.modules.auth.dtos.request.AuthRequest;
+import ec.yavirac.yavigestion.modules.auth.dtos.request.RegisterRequest;
 import ec.yavirac.yavigestion.modules.auth.dtos.response.AuthResponse;
+import ec.yavirac.yavigestion.modules.auth.entities.Person;
 import ec.yavirac.yavigestion.modules.auth.entities.User;
 import ec.yavirac.yavigestion.modules.auth.providers.jwt.JwtProvider;
+import ec.yavirac.yavigestion.modules.auth.services.person.PersonService;
 import ec.yavirac.yavigestion.modules.auth.services.user.UserService;
+import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericOnlyTextResponse;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -20,27 +24,43 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Qualifier("userServiceImpl")
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
+    @Qualifier("personServiceImpl")
+    private final PersonService personService;
 
     @Qualifier("jwtProviderImpl")
     private final JwtProvider jwtProvider;
 
-    public AuthenticationServiceImpl(UserService userService, BCryptPasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
+    public AuthenticationServiceImpl(UserService userService, BCryptPasswordEncoder passwordEncoder, PersonService personService, JwtProvider jwtProvider) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.personService = personService;
         this.jwtProvider = jwtProvider;
     }
 
-    public GenericOnlyTextResponse register(AuthRequest req) {
+    public GenericOnlyTextResponse register(RegisterRequest req) {
         if (userService.findByEmail(req.getEmail()).isPresent()) {
             return GenericOnlyTextResponse.builder()
                             .message("email ya resgistrado")
                             .status(HttpStatus.BAD_REQUEST.value()).build();
         }
+
+        if(!req.getPassword().equals(req.getConfirmPassword())) {
+            return GenericOnlyTextResponse.builder()
+                    .message("Las contraseñas no coinciden")
+                    .status(HttpStatus.BAD_REQUEST.value()).build();
+        }
+
         User user = User.builder()
                 .email(req.getEmail())
                 .passwordHash(passwordEncoder.encode(req.getPassword()))
+                .status(StatusConst.ACTIVE)
                 .build();
         userService.save(user);
+
+        Person person = new Person();
+        person.setName(req.getFirstName());
+        person.setLastname(req.getLastName());
+        personService.save(person);
 
         return GenericOnlyTextResponse.builder()
                         .message("Registrado")

@@ -23,11 +23,11 @@ public class User {
 
     @Column(name = "created_at", updatable = false, nullable = false)
     @CreatedDate
-    private LocalDate createdAt;
+    private Instant  createdAt;
 
     @Column(name = "updated_at")
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private Instant  updatedAt;
 
     @Column(unique = true, nullable = false)
     private String email;

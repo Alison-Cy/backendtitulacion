@@ -4,6 +4,7 @@ import ec.yavirac.yavigestion.modules.auth.entities.Permission;
 import ec.yavirac.yavigestion.modules.auth.entities.Role;
 import ec.yavirac.yavigestion.modules.auth.entities.User;
 import ec.yavirac.yavigestion.modules.auth.repositories.UserRepository;
+import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -24,6 +25,11 @@ public class UserServiceImpl implements UserService {
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public Long count() {
+        return this.userRepository.countUserByStatus(StatusConst.ACTIVE);
     }
 
     public User loadUserById(Long id) {

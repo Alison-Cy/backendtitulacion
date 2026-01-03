@@ -17,6 +17,7 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class)
 public class Person {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "created_at", updatable = false, nullable = false)
     @CreatedDate
@@ -27,7 +28,6 @@ public class Person {
     private String name;
     private String lastname;
     private String dni;
-    private String email;
     private String phonenumber;
     private String address;
     @Enumerated(EnumType.STRING)

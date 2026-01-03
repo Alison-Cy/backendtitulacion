@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 public interface AcademicPeriodsRepository extends JpaRepository<AcademicPeriods, Long> {
     Page<AcademicPeriods> findAll(Pageable pageable);
 
+    Long countAcademicPeriodsByStatus(String status);
 }
