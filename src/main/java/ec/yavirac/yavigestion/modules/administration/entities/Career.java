@@ -1,5 +1,6 @@
 package ec.yavirac.yavigestion.modules.administration.entities;
 
+import ec.yavirac.yavigestion.modules.administration.enums.CareerType;
 import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,6 +20,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Career {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "created_at", updatable = false, nullable = false)
@@ -31,13 +33,10 @@ public class Career {
 
     private String name;
     private String description;
+    private CareerType type;
 
-    @ManyToMany
-    @JoinTable(
-            name = "career_period",
-            joinColumns = @JoinColumn(name = "career_id"),
-            inverseJoinColumns = @JoinColumn(name = "period_id")
-    )
+
+    @ManyToMany(mappedBy = "careers")
     private List<AcademicPeriods> academicPeriods;
 
 

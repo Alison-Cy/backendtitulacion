@@ -1,19 +1,27 @@
 package ec.yavirac.yavigestion.modules.auth.services.admin;
 
-import ec.yavirac.yavigestion.modules.auth.decorators.HasPermission;
+import ec.yavirac.yavigestion.modules.auth.dtos.request.role.AssignRoleDTO;
+import ec.yavirac.yavigestion.modules.auth.dtos.request.role.RoleDTO;
 import ec.yavirac.yavigestion.modules.auth.entities.Permission;
-import ec.yavirac.yavigestion.modules.auth.entities.Person;
 import ec.yavirac.yavigestion.modules.auth.entities.Role;
 import ec.yavirac.yavigestion.modules.auth.entities.User;
 import ec.yavirac.yavigestion.modules.auth.repositories.PermissionRepository;
 import ec.yavirac.yavigestion.modules.auth.repositories.RoleRepository;
 import ec.yavirac.yavigestion.modules.auth.repositories.UserRepository;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericOnlyTextResponse;
+import ec.yavirac.yavigestion.modules.core.dtos.response.GenericPaginationResponse;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.data.domain.Pageable;
 
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class AdminServiceImpl implements AdminService {
@@ -26,7 +34,31 @@ public class AdminServiceImpl implements AdminService {
         this.roleRepo = roleRepo;
         this.permissionRepo = permissionRepo;
         this.userRepo = userRepo;
-    }                                                                                                                                   
+    }
+
+    @Override
+    public GenericPaginationResponse<RoleDTO> findAllRoles(Pageable pageable) {
+        Page<Role> roles = roleRepo.findAll(pageable);
+        List<RoleDTO> transformedRoles = roles.getContent().stream()
+                .map(role -> RoleDTO
+                        .builder()
+                        .id(role.getId())
+                        .description(role.getDescription())
+                        .name(role.getName())
+                        .status(role.getStatus())
+                        .build()).toList();
+
+        return ResponseEntity.ok(GenericPaginationResponse
+                .<RoleDTO>builder()
+                .currentPage(pageable.getPageNumber())
+                .data(transformedRoles)
+                .totalPages(roles.getTotalPages())
+                .pageSize(pageable.getPageSize())
+                .totalElements(roles.getTotalElements())
+                .status(200)
+                .build()).getBody();
+    }
+
     public GenericResponse<Role> createRole(Role role) {
         if (roleRepo.findByName(role.getName()).isPresent()) return GenericResponse.<Role>builder()
                 .message("El rol que se desea crear ya existe")
@@ -69,14 +101,14 @@ public class AdminServiceImpl implements AdminService {
                 .build();
     }
 
-    public GenericOnlyTextResponse addRoleToUser(Long userId, String roleName) {
+    public GenericOnlyTextResponse addRoleToUser(Long userId, AssignRoleDTO roles) {
         Optional<User> ou = userRepo.findById(userId);
         if (ou.isEmpty()) return GenericOnlyTextResponse.builder().status(404).message("Usuario no encontrado").build();
-        Optional<Role> or = roleRepo.findByName(roleName);
-        if (or.isEmpty()) return GenericOnlyTextResponse.builder().status(404).message("Rol no encontrado").build();
+        List<Role> foundRoles = roleRepo.findAllById(roles.getRoleIds());
+
 
         User u = ou.get();
-        u.getRoles().add(or.get());
+        u.setRoles(new HashSet<>(foundRoles));
         userRepo.save(u);
         return GenericOnlyTextResponse.builder().status(200).message("Rol asignado").build();
     }

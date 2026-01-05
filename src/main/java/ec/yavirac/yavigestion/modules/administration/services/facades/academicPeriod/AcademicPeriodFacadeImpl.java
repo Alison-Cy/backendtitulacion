@@ -1,11 +1,16 @@
 package ec.yavirac.yavigestion.modules.administration.services.facades.academicPeriod;
 
-import ec.yavirac.yavigestion.modules.administration.dtos.request.academicPeriods.AcademicPeriodDTO;
+import ec.yavirac.yavigestion.modules.administration.dtos.request.academicPeriods.CareerByPeriodDTO;
+import ec.yavirac.yavigestion.modules.administration.dtos.response.AcademicPeriodDTO;
 import ec.yavirac.yavigestion.modules.administration.dtos.request.academicPeriods.CreateAcademicPeriodDTO;
 import ec.yavirac.yavigestion.modules.administration.dtos.request.academicPeriods.UpdateAcademicPeriodDTO;
+import ec.yavirac.yavigestion.modules.administration.dtos.response.CareerAcademicPeriodDTO;
+import ec.yavirac.yavigestion.modules.administration.dtos.response.CareerDTO;
 import ec.yavirac.yavigestion.modules.administration.entities.AcademicPeriods;
-import ec.yavirac.yavigestion.modules.administration.entities.Vinculation;
+import ec.yavirac.yavigestion.modules.administration.entities.Career;
+import ec.yavirac.yavigestion.modules.administration.enums.CareerType;
 import ec.yavirac.yavigestion.modules.administration.services.database.academicPeriods.AcademicPeriodService;
+import ec.yavirac.yavigestion.modules.administration.services.database.careers.CareerService;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericOnlyTextResponse;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericPaginationResponse;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericResponse;
@@ -16,7 +21,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 @Log4j2
@@ -25,8 +33,12 @@ public class AcademicPeriodFacadeImpl implements AcademicPeriodFacade {
     @Qualifier("academicPeriodServiceImpl")
     private final AcademicPeriodService academicPeriodService;
 
-    public AcademicPeriodFacadeImpl(AcademicPeriodService academicPeriodService) {
+    @Qualifier("careerServiceImpl")
+    private final CareerService careerService;
+
+    public AcademicPeriodFacadeImpl(AcademicPeriodService academicPeriodService, CareerService careerService) {
         this.academicPeriodService = academicPeriodService;
+        this.careerService = careerService;
     }
 
     @Override
@@ -121,6 +133,57 @@ public class AcademicPeriodFacadeImpl implements AcademicPeriodFacade {
                 .totalElements(page.getTotalElements())
                 .status(200)
                 .build()).getBody();
+    }
+
+    @Override
+    public GenericResponse<CareerAcademicPeriodDTO> findCareersByPeriod(Long id) {
+        AcademicPeriods academicPeriods = academicPeriodService.findById(id);
+        Set<Career> careers = academicPeriods.getCareers();
+        Long totalDual = careers.stream().filter(career -> career.getType().equals(CareerType.DUAL)).count();
+        Long totalTraditional = careers.stream()
+                .filter(career -> career.getType().equals(CareerType.TRADITIONAL))
+                .count();
+
+        CareerAcademicPeriodDTO careerAcademicPeriodDTO = CareerAcademicPeriodDTO
+                .builder()
+                .totalDual(totalDual)
+                .totalTraditional(totalTraditional)
+                .id(academicPeriods.getId())
+                .name(academicPeriods.getName())
+                .totalCareers((long) careers.size())
+                .startDate(academicPeriods.getStartDate())
+                .endDate(academicPeriods.getEndDate())
+                .description(academicPeriods.getDescription())
+                .status(academicPeriods.getStatus())
+                .careers(academicPeriods.getCareers()
+                        .stream()
+                        .map(career -> CareerDTO
+                                .builder()
+                                .id(career.getId())
+                                .name(career.getName())
+                                .description(career.getDescription())
+                                .isDual(career.getType())
+                                .build())
+                        .toList())
+                .build();
+
+        return GenericResponse
+                .<CareerAcademicPeriodDTO>builder()
+                .status(200)
+                .data(careerAcademicPeriodDTO)
+                .build();
+    }
+
+    @Override
+    public GenericOnlyTextResponse assignCareers(Long id, CareerByPeriodDTO careerAcademicPeriodDTO) {
+        AcademicPeriods academicPeriods = academicPeriodService.findById(id);
+        Set<Career> careers = new HashSet<>(careerService.findAllByIds(careerAcademicPeriodDTO.getCareerIds()));
+        academicPeriods.setCareers(careers);
+        academicPeriodService.save(academicPeriods);
+        return GenericOnlyTextResponse
+                .builder()
+                .status(200).message("Se ha asignado las carreras respectivas")
+                .build();
     }
 
 }

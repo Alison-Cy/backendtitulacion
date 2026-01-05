@@ -1,5 +1,8 @@
 package ec.yavirac.yavigestion.modules.administration.services.facades.career;
 
+import ec.yavirac.yavigestion.modules.administration.dtos.request.career.CreateCareerDTO;
+import ec.yavirac.yavigestion.modules.administration.dtos.request.career.UpdateCareerDto;
+import ec.yavirac.yavigestion.modules.administration.dtos.response.CareerDTO;
 import ec.yavirac.yavigestion.modules.administration.entities.Career;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericOnlyTextResponse;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericPaginationResponse;
@@ -9,13 +12,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface CareerFacade {
-    GenericOnlyTextResponse save(Career career);
+    GenericOnlyTextResponse save(CreateCareerDTO career);
 
-    GenericOnlyTextResponse update(Long id, Career career);
+    GenericOnlyTextResponse update(Long id, UpdateCareerDto career);
 
     GenericOnlyTextResponse delete(Long id);
 
-    GenericResponse<Career> findById(Long id);
+    GenericResponse<CareerDTO> findById(Long id);
 
-    GenericPaginationResponse<Career> findAll(Pageable pageable);
+    GenericPaginationResponse<CareerDTO> findAll(Pageable pageable);
 }

@@ -19,6 +19,7 @@ import java.util.Set;
 @EntityListeners(AuditingEntityListener.class)
 public class Project {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "created_at", updatable = false, nullable = false)

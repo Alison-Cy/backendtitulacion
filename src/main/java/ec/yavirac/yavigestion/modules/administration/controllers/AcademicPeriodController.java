@@ -1,9 +1,10 @@
 package ec.yavirac.yavigestion.modules.administration.controllers;
 
-import ec.yavirac.yavigestion.modules.administration.dtos.request.academicPeriods.AcademicPeriodDTO;
+import ec.yavirac.yavigestion.modules.administration.dtos.request.academicPeriods.CareerByPeriodDTO;
+import ec.yavirac.yavigestion.modules.administration.dtos.response.AcademicPeriodDTO;
 import ec.yavirac.yavigestion.modules.administration.dtos.request.academicPeriods.CreateAcademicPeriodDTO;
 import ec.yavirac.yavigestion.modules.administration.dtos.request.academicPeriods.UpdateAcademicPeriodDTO;
-import ec.yavirac.yavigestion.modules.administration.services.database.academicPeriods.AcademicPeriodService;
+import ec.yavirac.yavigestion.modules.administration.dtos.response.CareerAcademicPeriodDTO;
 import ec.yavirac.yavigestion.modules.administration.services.facades.academicPeriod.AcademicPeriodFacade;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericOnlyTextResponse;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericPaginationResponse;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,7 +25,6 @@ public class AcademicPeriodController {
     public AcademicPeriodController(AcademicPeriodFacade academicPeriodFacade) {
         this.academicPeriodFacade = academicPeriodFacade;
     }
-
 
     @PostMapping
     public ResponseEntity<GenericOnlyTextResponse> create(@RequestBody CreateAcademicPeriodDTO academicPeriodDTO) {
@@ -45,15 +44,28 @@ public class AcademicPeriodController {
         return ResponseEntity.status(period.getStatus()).body(period);
     }
 
+
+    @GetMapping("/{id}/career")
+    public ResponseEntity<GenericResponse<CareerAcademicPeriodDTO>> findCareersPeriod(@PathVariable Long id) {
+        GenericResponse<CareerAcademicPeriodDTO> period = academicPeriodFacade.findCareersByPeriod(id);
+        return ResponseEntity.status(period.getStatus()).body(period);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<GenericOnlyTextResponse> update(@PathVariable Long id, @RequestBody UpdateAcademicPeriodDTO academicPeriodDTO) {
         GenericOnlyTextResponse response = academicPeriodFacade.update(id, academicPeriodDTO);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
+
+    @PutMapping("/{id}/assignCareer")
+    public ResponseEntity<GenericOnlyTextResponse> assignCareers(@PathVariable Long id, @RequestBody CareerByPeriodDTO academicPeriodDTO) {
+        GenericOnlyTextResponse response = academicPeriodFacade.assignCareers(id, academicPeriodDTO);
+        return ResponseEntity.status(response.getStatus()).body(response);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<GenericOnlyTextResponse> delete(@PathVariable Long id) {
         GenericOnlyTextResponse response = academicPeriodFacade.delete(id);
         return ResponseEntity.status(response.getStatus()).body(response);
     }
-
 }

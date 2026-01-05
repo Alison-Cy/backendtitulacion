@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
@@ -21,10 +22,10 @@ public class Person {
     private Long id;
     @Column(name = "created_at", updatable = false, nullable = false)
     @CreatedDate
-    private LocalDate createdAt;
+    private Instant createdAt;
     @Column(name = "updated_at")
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private Instant updatedAt;
     private String name;
     private String lastname;
     private String dni;
@@ -34,6 +35,7 @@ public class Person {
     private BloodType bloodtype;
     private String gender;
     private LocalDate birthdate;
+    private String email;
 
     @OneToOne(mappedBy = "person")
     private User user;

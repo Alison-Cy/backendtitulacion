@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Set;
 
@@ -20,11 +21,11 @@ public class Role {
 
     @Column(name = "created_at", updatable = false, nullable = false)
     @CreatedDate
-    private LocalDate createdAt;
+    private Instant createdAt;
 
     @Column(name = "updated_at")
     @LastModifiedDate
-    private LocalDate updatedAt;
+    private Instant updatedAt;
 
     @Column(unique = true, nullable = false)
     private String name;

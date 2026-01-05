@@ -50,17 +50,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .status(HttpStatus.BAD_REQUEST.value()).build();
         }
 
-        User user = User.builder()
-                .email(req.getEmail())
-                .passwordHash(passwordEncoder.encode(req.getPassword()))
-                .status(StatusConst.ACTIVE)
-                .build();
-        userService.save(user);
 
         Person person = new Person();
         person.setName(req.getFirstName());
         person.setLastname(req.getLastName());
-        personService.save(person);
+        Person createdPerson = personService.save(person);
+
+        User user = User.builder()
+                .email(req.getEmail())
+                .passwordHash(passwordEncoder.encode(req.getPassword()))
+                .person(createdPerson)
+                .status(StatusConst.ACTIVE)
+                .build();
+        userService.save(user);
+
+
 
         return GenericOnlyTextResponse.builder()
                         .message("Registrado")

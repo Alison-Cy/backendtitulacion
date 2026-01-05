@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class CareerServiceImpl implements CareerService {
 
@@ -51,5 +53,10 @@ public class CareerServiceImpl implements CareerService {
     @Override
     public Long count() {
         return repository.countCareerByStatus(StatusConst.ACTIVE);
+    }
+
+    @Override
+    public List<Career> findAllByIds(List<Long> ids) {
+        return repository.findAllById(ids);
     }
 }

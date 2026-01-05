@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface CareerService {
     Career save(Career career);
@@ -19,4 +21,6 @@ public interface CareerService {
     Page<Career> findAll(Pageable pageable);
 
     Long count();
+
+    List<Career> findAllByIds(List<Long> ids);
 }

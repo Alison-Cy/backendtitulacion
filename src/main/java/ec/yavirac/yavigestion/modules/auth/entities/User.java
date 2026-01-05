@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -42,15 +43,15 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "person_id", referencedColumnName = "id")
-    Person person;
+    Person person = new Person();
 
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<UserInterships> interships;
+    private Set<UserInterships> interships = new HashSet<>();
 
     String status = StatusConst.ACTIVE;
 }

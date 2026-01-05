@@ -1,16 +1,17 @@
-package ec.yavirac.yavigestion.modules.administration.dtos.request.academicPeriods;
+package ec.yavirac.yavigestion.modules.administration.dtos.response;
 
-import jakarta.persistence.Column;
+import ec.yavirac.yavigestion.modules.administration.entities.Career;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
 @Builder
-public class AcademicPeriodDTO {
+public class CareerAcademicPeriodDTO {
     private Long id;
     private String name;
     private String description;
@@ -18,4 +19,7 @@ public class AcademicPeriodDTO {
     private LocalDate endDate;
     private String status;
     private Long totalCareers;
+    private List<CareerDTO> careers;
+    private Long totalTraditional;
+    private Long totalDual;
 }

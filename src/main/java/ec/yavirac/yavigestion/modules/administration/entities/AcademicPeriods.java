@@ -37,7 +37,12 @@ public class AcademicPeriods {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @ManyToMany(mappedBy = "academicPeriods")
+    @ManyToMany
+    @JoinTable(
+            name = "period_career",
+            joinColumns = @JoinColumn(name = "period_id"),
+            inverseJoinColumns = @JoinColumn(name = "career_id")
+    )
     private Set<Career> careers;
 
     @OneToMany(mappedBy = "academicPeriod", fetch = FetchType.LAZY)
