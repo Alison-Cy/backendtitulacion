@@ -11,6 +11,7 @@ import ec.yavirac.yavigestion.modules.administration.entities.Career;
 import ec.yavirac.yavigestion.modules.administration.enums.CareerType;
 import ec.yavirac.yavigestion.modules.administration.services.database.academicPeriods.AcademicPeriodService;
 import ec.yavirac.yavigestion.modules.administration.services.database.careers.CareerService;
+import ec.yavirac.yavigestion.modules.core.consts.StatusConst;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericOnlyTextResponse;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericPaginationResponse;
 import ec.yavirac.yavigestion.modules.core.dtos.response.GenericResponse;
@@ -143,6 +144,9 @@ public class AcademicPeriodFacadeImpl implements AcademicPeriodFacade {
         Long totalTraditional = careers.stream()
                 .filter(career -> career.getType().equals(CareerType.TRADITIONAL))
                 .count();
+        Long totalActiveCareers = careers.stream()
+                .filter(career -> career.getStatus().equals(StatusConst.ACTIVE))
+                .count();
 
         CareerAcademicPeriodDTO careerAcademicPeriodDTO = CareerAcademicPeriodDTO
                 .builder()
@@ -155,6 +159,7 @@ public class AcademicPeriodFacadeImpl implements AcademicPeriodFacade {
                 .endDate(academicPeriods.getEndDate())
                 .description(academicPeriods.getDescription())
                 .status(academicPeriods.getStatus())
+                .totalActiveCareers(totalActiveCareers)
                 .careers(academicPeriods.getCareers()
                         .stream()
                         .map(career -> CareerDTO

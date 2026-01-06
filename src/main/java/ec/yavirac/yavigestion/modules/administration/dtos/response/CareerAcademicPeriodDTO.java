@@ -19,6 +19,7 @@ public class CareerAcademicPeriodDTO {
     private LocalDate endDate;
     private String status;
     private Long totalCareers;
+    private Long totalActiveCareers;
     private List<CareerDTO> careers;
     private Long totalTraditional;
     private Long totalDual;
